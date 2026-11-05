@@ -1,0 +1,48 @@
+name: BladeChat
+main: org.bladestudio.bladechat.BladeChat
+version: '1.0'
+author: pluginsfix, pasha67812
+description: Специально для BladeStudio
+softdepend: [Vault, PlaceholderAPI, LuckPerms]
+commands:
+  bladechat:
+    description: Главная команда управления BladeChat
+    permission: bladechat.admin
+    aliases: [bchat, chat]
+permissions:
+  bladechat.admin:
+    description: Доступ к командам управления плагином
+    default: op
+  bladechat.reload:
+    description: Право на перезагрузку плагина
+    default: op
+  bladechat.clear:
+    description: Право на очистку чата
+    default: op
+  bladechat.bypassads:
+    description: Иммунитет к блокировке рекламы
+    default: op
+  bladechat.notifyad:
+    description: Уведомление персонала о рекламе
+    default: op
+  bladechat.chat.color:
+    description: Доступ к цветам в чате
+    default: op
+  bladechat.chat.bold:
+    description: Доступ к жирному тексту
+    default: op
+  bladechat.chat.magic:
+    description: Доступ к магическому тексту
+    default: op
+  bladechat.chat.strikethrough:
+    description: Доступ к зачеркиванию
+    default: op
+  bladechat.chat.underline:
+    description: Доступ к подчеркиванию
+    default: op
+  bladechat.chat.italic:
+    description: Доступ к курсиву
+    default: op
+  bladechat.chat.reset:
+    description: Доступ к сбросу цвета
+    default: op

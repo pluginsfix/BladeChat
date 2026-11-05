@@ -1,0 +1,16 @@
+enable: true
+message-format: "&7%prefix%%player%%suffix%&8: &f%message%"
+global-message-format: "&8[&6Г&8] &7%prefix%%player%%suffix%&8: &e%message%"
+ranged-mode: true
+chat-range: 100.0
+log-chat: true
+priority: "LOWEST"
+debug: false
+ads:
+  enabled: true
+  bypass:
+    - "127.0.0.1"
+    - "bladestudio.org"
+  log: true
+join-quit-messages:
+  enabled: false
