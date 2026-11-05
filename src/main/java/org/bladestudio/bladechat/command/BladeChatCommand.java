@@ -44,9 +44,8 @@ public final class BladeChatCommand implements CommandExecutor, TabCompleter {
                 Messages.send(sender, "no-permission");
                 return true;
             }
-            for (int i = 0; i < 100; i++) {
-                Bukkit.broadcastMessage(" ");
-            }
+            String blank = " \n".repeat(100);
+            Bukkit.broadcastMessage(blank);
             String senderName = (sender instanceof Player player) ? player.getName() : "Консоль";
             for (Player player : Bukkit.getOnlinePlayers()) {
                 Messages.send(player, "clear", Map.of("%player%", senderName));

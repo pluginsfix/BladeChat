@@ -6,12 +6,14 @@ import org.bladestudio.bladechat.listener.ChatListener;
 import org.bladestudio.bladechat.listener.priority.LOWEST;
 import org.bladestudio.bladechat.util.Messages;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class BladeChat extends JavaPlugin {
 
     private static BladeChat instance;
     private HookManager hookManager;
+    private ChatListener currentListener;
 
     @Override
     public void onEnable() {
@@ -31,6 +33,10 @@ public final class BladeChat extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
+        if (currentListener != null) {
+            HandlerList.unregisterAll(currentListener);
+            currentListener = null;
+        }
         getLogger().info("BladeChat выключен.");
         instance = null;
     }
@@ -38,16 +44,21 @@ public final class BladeChat extends JavaPlugin {
     public void reloadPlugin() {
         reloadConfig();
         Messages.reload();
+        registerChatListener();
     }
 
     private void registerChatListener() {
+        if (currentListener != null) {
+            HandlerList.unregisterAll(currentListener);
+        }
         String priorityName = getConfig().getString("priority", "LOWEST").toUpperCase();
         try {
             Class<?> clazz = Class.forName("org.bladestudio.bladechat.listener.priority." + priorityName);
-            ChatListener listener = (ChatListener) clazz.getDeclaredConstructor(BladeChat.class).newInstance(this);
-            getServer().getPluginManager().registerEvents(listener, this);
+            this.currentListener = (ChatListener) clazz.getDeclaredConstructor(BladeChat.class).newInstance(this);
+            getServer().getPluginManager().registerEvents(this.currentListener, this);
         } catch (Exception ex) {
-            getServer().getPluginManager().registerEvents(new LOWEST(this), this);
+            this.currentListener = new LOWEST(this);
+            getServer().getPluginManager().registerEvents(this.currentListener, this);
         }
     }
 

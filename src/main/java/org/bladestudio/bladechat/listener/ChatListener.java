@@ -6,6 +6,7 @@ import org.bladestudio.bladechat.util.ChatFilter;
 import org.bladestudio.bladechat.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,20 +90,28 @@ public abstract class ChatListener implements Listener {
             if (rawMessage.startsWith("!")) {
                 isGlobal = true;
                 rawMessage = rawMessage.substring(1).trim();
+                if (rawMessage.isEmpty()) {
+                    event.setCancelled(true);
+                    return;
+                }
                 format = plugin.getConfig().getString("global-message-format", "&8[&6Г&8] %prefix%%player%%suffix%&8: &e%message%");
             } else {
                 format = plugin.getConfig().getString("message-format", "%prefix%%player%%suffix%&8: &f%message%");
                 double range = plugin.getConfig().getDouble("chat-range", 100.0);
                 double rangeSquared = range * range;
                 Location senderLocation = player.getLocation();
-                List<Player> recipients = new ArrayList<>();
-                for (Player recipient : player.getWorld().getPlayers()) {
-                    if (senderLocation.distanceSquared(recipient.getLocation()) <= rangeSquared) {
-                        recipients.add(recipient);
+                World senderWorld = player.getWorld();
+
+                event.getRecipients().removeIf(recipient -> {
+                    if (recipient == null || !recipient.isOnline()) {
+                        return true;
                     }
-                }
-                event.getRecipients().clear();
-                event.getRecipients().addAll(recipients);
+                    Location recipientLocation = recipient.getLocation();
+                    if (recipientLocation == null || !senderWorld.equals(recipientLocation.getWorld())) {
+                        return true;
+                    }
+                    return senderLocation.distanceSquared(recipientLocation) > rangeSquared;
+                });
             }
         } else {
             format = plugin.getConfig().getString("message-format", "%prefix%%player%%suffix%&8: &f%message%");
@@ -115,10 +123,18 @@ public abstract class ChatListener implements Listener {
 
         BladeChatEvent bladeChatEvent = new BladeChatEvent(player, format);
         Bukkit.getPluginManager().callEvent(bladeChatEvent);
+        if (bladeChatEvent.isCancelled()) {
+            event.setCancelled(true);
+            return;
+        }
         format = bladeChatEvent.getFormat();
 
         event.setFormat(Messages.colorize(format));
-        String formattedMessage = ChatFilter.applyPlayerPermissions(rawMessage, player);
+        String formattedMessage = ChatFilter.filterPlayerMessage(rawMessage, player);
+        if (formattedMessage.isEmpty()) {
+            event.setCancelled(true);
+            return;
+        }
         event.setMessage(formattedMessage);
 
         if (plugin.getConfig().getBoolean("log-chat", true)) {

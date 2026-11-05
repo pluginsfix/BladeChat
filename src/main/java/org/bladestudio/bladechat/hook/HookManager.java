@@ -31,18 +31,20 @@ public final class HookManager {
         return vaultHook.getPrimaryGroup(player);
     }
 
+    private static String escapePercent(String text) {
+        return text != null ? text.replace("%", "%%") : "";
+    }
+
     public String replacePlaceholders(Player player, String text) {
         if (text == null || text.isEmpty()) {
             return "";
         }
 
         String result = text;
-        result = result.replace("%player%", player.getName());
-        result = result.replace("%displayname%", player.getDisplayName());
-        result = result.replace("%world%", player.getWorld().getName());
-        result = result.replace("%prefix%", getPrefix(player));
-        result = result.replace("%suffix%", getSuffix(player));
-        result = result.replace("%group%", getGroup(player));
+        result = result.replace("%prefix%", escapePercent(getPrefix(player)));
+        result = result.replace("%suffix%", escapePercent(getSuffix(player)));
+        result = result.replace("%group%", escapePercent(getGroup(player)));
+        result = result.replace("%world%", escapePercent(player.getWorld().getName()));
         result = result.replace("%time%", LocalTime.now().format(TIME_FORMATTER));
 
         if (placeholderApiPresent) {

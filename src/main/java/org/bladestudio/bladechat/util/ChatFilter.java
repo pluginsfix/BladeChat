@@ -24,32 +24,54 @@ public final class ChatFilter {
 
     private ChatFilter() {}
 
-    public static String applyPlayerPermissions(String message, Player player) {
+    public static String filterPlayerMessage(String message, Player player) {
         if (message == null || message.isEmpty()) {
             return "";
         }
         String formatted = message;
+
         if (player.hasPermission("bladechat.chat.color")) {
             formatted = CHAT_COLOR_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§][0-9a-f]", "");
         }
+
         if (player.hasPermission("bladechat.chat.magic")) {
             formatted = CHAT_MAGIC_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]k", "");
         }
+
         if (player.hasPermission("bladechat.chat.bold")) {
             formatted = CHAT_BOLD_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]l", "");
         }
+
         if (player.hasPermission("bladechat.chat.strikethrough")) {
             formatted = CHAT_STRIKETHROUGH_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]m", "");
         }
+
         if (player.hasPermission("bladechat.chat.underline")) {
             formatted = CHAT_UNDERLINE_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]n", "");
         }
+
         if (player.hasPermission("bladechat.chat.italic")) {
             formatted = CHAT_ITALIC_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]o", "");
         }
+
         if (player.hasPermission("bladechat.chat.reset")) {
             formatted = CHAT_RESET_PATTERN.matcher(formatted).replaceAll("§$1");
+        } else {
+            formatted = formatted.replaceAll("(?i)[&§]r", "");
         }
+
         return formatted;
     }
 
@@ -60,13 +82,17 @@ public final class ChatFilter {
 
         String normalized = text.toLowerCase();
         for (String allowed : whitelist) {
-            normalized = normalized.replace(allowed.toLowerCase(), "");
+            if (allowed != null && !allowed.isEmpty()) {
+                normalized = normalized.replace(allowed.toLowerCase(), "");
+            }
         }
 
-        if (IP_PATTERN.matcher(normalized).find()) {
+        String compact = normalized.replaceAll("[\\s_\\-,;:]+", "");
+
+        if (IP_PATTERN.matcher(normalized).find() || IP_PATTERN.matcher(compact).find()) {
             return true;
         }
 
-        return WEB_PATTERN.matcher(normalized).find();
+        return WEB_PATTERN.matcher(normalized).find() || WEB_PATTERN.matcher(compact).find();
     }
 }

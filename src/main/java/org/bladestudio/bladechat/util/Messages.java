@@ -64,7 +64,9 @@ public final class Messages {
             return "";
         }
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            message = message.replace(entry.getKey(), entry.getValue());
+            if (entry.getKey() != null && entry.getValue() != null) {
+                message = message.replace(entry.getKey(), entry.getValue());
+            }
         }
         return colorize(message);
     }
