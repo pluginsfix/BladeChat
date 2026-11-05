@@ -8,11 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Messages {
 
-    private static final Pattern ITALIC_PATTERN = Pattern.compile("(?i)[&§]o");
+    private static final Pattern HEX_PATTERN = Pattern.compile("(?:&#|<#|\\{#)([A-Fa-f0-9]{6})(?:>|\\})?");
     private static JavaPlugin pluginInstance;
     private static File messagesFile;
     private static YamlConfiguration messagesConfig;
@@ -36,11 +37,19 @@ public final class Messages {
     }
 
     public static String colorize(String text) {
-        if (text == null) {
+        if (text == null || text.isEmpty()) {
             return "";
         }
-        String cleaned = ITALIC_PATTERN.matcher(text).replaceAll("");
-        return ChatColor.translateAlternateColorCodes('&', cleaned);
+        Matcher matcher = HEX_PATTERN.matcher(text);
+        StringBuilder buffer = new StringBuilder(text.length() + 32);
+        while (matcher.find()) {
+            String hex = matcher.group(1);
+            matcher.appendReplacement(buffer, "§x§" + hex.charAt(0) + "§" + hex.charAt(1)
+                    + "§" + hex.charAt(2) + "§" + hex.charAt(3)
+                    + "§" + hex.charAt(4) + "§" + hex.charAt(5));
+        }
+        matcher.appendTail(buffer);
+        return ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
 
     public static String getPrefix() {

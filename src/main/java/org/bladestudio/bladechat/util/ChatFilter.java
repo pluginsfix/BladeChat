@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 public final class ChatFilter {
 
+    private static final Pattern HEX_PATTERN = Pattern.compile("(?:&#|<#|\\{#)([A-Fa-f0-9]{6})(?:>|\\})?");
     private static final Pattern CHAT_COLOR_PATTERN = Pattern.compile("(?i)&([0-9a-f])");
     private static final Pattern CHAT_MAGIC_PATTERN = Pattern.compile("(?i)&([k])");
     private static final Pattern CHAT_BOLD_PATTERN = Pattern.compile("(?i)&([l])");
@@ -31,8 +32,9 @@ public final class ChatFilter {
         String formatted = message;
 
         if (player.hasPermission("bladechat.chat.color")) {
-            formatted = CHAT_COLOR_PATTERN.matcher(formatted).replaceAll("§$1");
+            formatted = Messages.colorize(formatted);
         } else {
+            formatted = HEX_PATTERN.matcher(formatted).replaceAll("");
             formatted = formatted.replaceAll("(?i)[&§][0-9a-f]", "");
         }
 

@@ -94,10 +94,19 @@ public abstract class ChatListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                format = plugin.getConfig().getString("global-message-format", "&8[&6Г&8] %prefix%%player%%suffix%&8: &e%message%");
+                String cfgGlobal = plugin.getConfig().getString("global-message-format");
+                if (cfgGlobal == null) {
+                    cfgGlobal = plugin.getConfig().getString("format.global", "&8[&6Г&8] %prefix%%player%%suffix%&8: &e%message%");
+                }
+                format = cfgGlobal;
             } else {
-                format = plugin.getConfig().getString("message-format", "%prefix%%player%%suffix%&8: &f%message%");
-                double range = plugin.getConfig().getDouble("chat-range", 100.0);
+                String cfgLocal = plugin.getConfig().getString("message-format");
+                if (cfgLocal == null) {
+                    cfgLocal = plugin.getConfig().getString("format.local", "%prefix%%player%%suffix%&8: &f%message%");
+                }
+                format = cfgLocal;
+                double defaultRange = plugin.getConfig().getDouble("format.localRadius", 100.0);
+                double range = plugin.getConfig().getDouble("chat-range", defaultRange);
                 double rangeSquared = range * range;
                 Location senderLocation = player.getLocation();
                 World senderWorld = player.getWorld();
@@ -114,12 +123,17 @@ public abstract class ChatListener implements Listener {
                 });
             }
         } else {
-            format = plugin.getConfig().getString("message-format", "%prefix%%player%%suffix%&8: &f%message%");
+            String cfgFormat = plugin.getConfig().getString("message-format");
+            if (cfgFormat == null) {
+                cfgFormat = plugin.getConfig().getString("format.local", "%prefix%%player%%suffix%&8: &f%message%");
+            }
+            format = cfgFormat;
         }
 
+        format = format.replace("<prefix>", "%prefix%").replace("<suffix>", "%suffix%").replace("<group>", "%group%");
         format = plugin.getHookManager().replacePlaceholders(player, format);
-        format = format.replace("%message%", "%2$s").replace("%message", "%2$s");
-        format = format.replace("%player%", "%1$s").replace("%player", "%1$s");
+        format = format.replace("<message>", "%2$s").replace("%message%", "%2$s").replace("%message", "%2$s");
+        format = format.replace("<player>", "%1$s").replace("%player%", "%1$s").replace("%player", "%1$s");
 
         BladeChatEvent bladeChatEvent = new BladeChatEvent(player, format);
         Bukkit.getPluginManager().callEvent(bladeChatEvent);

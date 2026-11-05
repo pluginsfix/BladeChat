@@ -1,6 +1,8 @@
 enable: true
-message-format: "&7%prefix%%player%%suffix%&8: &f%message%"
-global-message-format: "&8[&6Г&8] &7%prefix%%player%%suffix%&8: &e%message%"
+format:
+  local: "&#E0A602Ⓛ %luckperms_prefix% <player> %luckperms_suffix% &7⇨ &#D8D8D8<message>"
+  global: "&#FF471AⒼ %luckperms_prefix% <player> %luckperms_suffix% &7⇨ &#D8D8D8<message>"
+  localRadius: 100
 ranged-mode: true
 chat-range: 100.0
 log-chat: true
