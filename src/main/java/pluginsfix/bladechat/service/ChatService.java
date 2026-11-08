@@ -2,6 +2,7 @@ package pluginsfix.bladechat.service;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pluginsfix.bladechat.config.ChatConfig;
 import pluginsfix.bladechat.hook.LuckPermsHook;
@@ -15,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ChatService {
-    private final ChatConfig config;
+    private volatile ChatConfig config;
     private final Messages messages;
     private final PlaceholderHook placeholderHook;
     private final LuckPermsHook luckPermsHook;
@@ -30,6 +31,14 @@ public final class ChatService {
         this.messages = messages;
         this.placeholderHook = placeholderHook;
         this.luckPermsHook = luckPermsHook;
+    }
+
+    public void updateConfig(ChatConfig config) {
+        this.config = config;
+    }
+
+    public ChatConfig getConfig() {
+        return config;
     }
 
     public boolean isChatMuted() {
@@ -156,12 +165,13 @@ public final class ChatService {
         }
 
         Component component = buildMessageComponent(player, config.localMessageFormat(), message);
+        Location senderLoc = player.getLocation();
         double radiusSq = config.localRadius() * config.localRadius();
         int recipientsCount = 0;
 
         for (Player target : Bukkit.getOnlinePlayers()) {
-            if (target.getWorld().equals(player.getWorld())) {
-                if (target.getLocation().distanceSquared(player.getLocation()) <= radiusSq) {
+            if (target.getWorld().equals(senderLoc.getWorld())) {
+                if (target.getLocation().distanceSquared(senderLoc) <= radiusSq) {
                     target.sendMessage(component);
                     if (!target.equals(player)) {
                         recipientsCount++;

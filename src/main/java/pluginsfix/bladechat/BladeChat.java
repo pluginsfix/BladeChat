@@ -30,7 +30,7 @@ public final class BladeChat extends JavaPlugin {
         this.luckPermsHook = new LuckPermsHook();
         this.chatService = new ChatService(chatConfig, messages, placeholderHook, luckPermsHook);
 
-        this.chatListener = new ChatListener(chatConfig, messages, chatService);
+        this.chatListener = new ChatListener(messages, chatService);
         getServer().getPluginManager().registerEvents(chatListener, this);
 
         registerCommands();
@@ -63,13 +63,7 @@ public final class BladeChat extends JavaPlugin {
         reloadConfig();
         this.chatConfig = ChatConfig.fromYaml(getConfig());
         this.messages.reload();
-        this.placeholderHook = new PlaceholderHook();
-        this.luckPermsHook = new LuckPermsHook();
-        this.chatService = new ChatService(chatConfig, messages, placeholderHook, luckPermsHook);
-
-        HandlerList.unregisterAll(this);
-        this.chatListener = new ChatListener(chatConfig, messages, chatService);
-        getServer().getPluginManager().registerEvents(chatListener, this);
+        this.chatService.updateConfig(chatConfig);
     }
 
     @Override

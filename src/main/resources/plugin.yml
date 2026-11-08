@@ -3,6 +3,7 @@ version: '${project.version}'
 main: pluginsfix.bladechat.BladeChat
 api-version: '1.21'
 author: pluginsfix
+folia-supported: true
 softdepend:
   - PlaceholderAPI
   - LuckPerms

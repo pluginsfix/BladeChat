@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class BladeChatCommand implements CommandExecutor, TabCompleter {
+    private static final Component CLEAR_BLOCK = Component.text("\n".repeat(100));
     private final BladeChat plugin;
     private final Messages messages;
     private final ChatService chatService;
@@ -54,12 +55,9 @@ public final class BladeChatCommand implements CommandExecutor, TabCompleter {
                     messages.send(sender, "no-permission");
                     return true;
                 }
-                Component emptyLine = Component.empty();
                 for (Player online : Bukkit.getOnlinePlayers()) {
                     if (!online.hasPermission("bladechat.admin.clear.bypass")) {
-                        for (int i = 0; i < 100; i++) {
-                            online.sendMessage(emptyLine);
-                        }
+                        online.sendMessage(CLEAR_BLOCK);
                     }
                 }
                 if (sender instanceof Player player) {
