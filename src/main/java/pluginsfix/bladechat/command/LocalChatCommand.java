@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import pluginsfix.bladechat.service.ChatChannel;
 import pluginsfix.bladechat.service.ChatService;
 import pluginsfix.bladechat.text.Messages;
 
@@ -29,7 +30,8 @@ public final class LocalChatCommand implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            messages.send(player, "empty-message");
+            chatService.setChannel(player.getUniqueId(), ChatChannel.LOCAL);
+            messages.send(player, "channel-switched-local");
             return true;
         }
 

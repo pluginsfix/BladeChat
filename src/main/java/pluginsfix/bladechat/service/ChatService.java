@@ -21,6 +21,7 @@ public final class ChatService {
     private final LuckPermsHook luckPermsHook;
 
     private final Map<UUID, Long> globalCooldowns = new ConcurrentHashMap<>();
+    private final Map<UUID, ChatChannel> playerChannels = new ConcurrentHashMap<>();
     private final Set<UUID> spyPlayers = ConcurrentHashMap.newKeySet();
     private volatile boolean chatMuted = false;
 
@@ -44,6 +45,14 @@ public final class ChatService {
         return this.chatMuted;
     }
 
+    public ChatChannel getChannel(UUID uuid) {
+        return playerChannels.getOrDefault(uuid, ChatChannel.LOCAL);
+    }
+
+    public void setChannel(UUID uuid, ChatChannel channel) {
+        playerChannels.put(uuid, channel);
+    }
+
     public boolean isSpy(UUID uuid) {
         return spyPlayers.contains(uuid);
     }
@@ -60,6 +69,7 @@ public final class ChatService {
 
     public void removePlayer(UUID uuid) {
         globalCooldowns.remove(uuid);
+        playerChannels.remove(uuid);
         spyPlayers.remove(uuid);
     }
 

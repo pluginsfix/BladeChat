@@ -2,9 +2,6 @@ package pluginsfix.bladechat.service;
 
 import org.junit.jupiter.api.Test;
 import pluginsfix.bladechat.config.ChatConfig;
-import pluginsfix.bladechat.hook.LuckPermsHook;
-import pluginsfix.bladechat.hook.PlaceholderHook;
-import pluginsfix.bladechat.text.Messages;
 
 import java.util.UUID;
 
@@ -57,5 +54,29 @@ class ChatServiceTest {
         assertThat(service.isSpy(uuid)).isTrue();
         assertThat(service.toggleSpy(uuid)).isFalse();
         assertThat(service.isSpy(uuid)).isFalse();
+    }
+
+    @Test
+    void shouldSwitchChatChannels() {
+        ChatConfig config = new ChatConfig(
+                "local-format",
+                "global-format",
+                100.0,
+                "!",
+                3,
+                false,
+                true,
+                "bladechat.color",
+                true,
+                "spy-format"
+        );
+        ChatService service = new ChatService(config, null, null, null);
+        UUID uuid = UUID.randomUUID();
+
+        assertThat(service.getChannel(uuid)).isEqualTo(ChatChannel.LOCAL);
+        service.setChannel(uuid, ChatChannel.GLOBAL);
+        assertThat(service.getChannel(uuid)).isEqualTo(ChatChannel.GLOBAL);
+        service.setChannel(uuid, ChatChannel.LOCAL);
+        assertThat(service.getChannel(uuid)).isEqualTo(ChatChannel.LOCAL);
     }
 }

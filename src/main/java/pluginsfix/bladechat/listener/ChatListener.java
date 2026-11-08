@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pluginsfix.bladechat.config.ChatConfig;
+import pluginsfix.bladechat.service.ChatChannel;
 import pluginsfix.bladechat.service.ChatService;
 import pluginsfix.bladechat.text.Messages;
 
@@ -44,7 +45,12 @@ public final class ChatListener implements Listener {
             return;
         }
 
-        chatService.sendLocalMessage(player, rawMessage);
+        ChatChannel channel = chatService.getChannel(player.getUniqueId());
+        if (channel == ChatChannel.GLOBAL) {
+            chatService.sendGlobalMessage(player, rawMessage);
+        } else {
+            chatService.sendLocalMessage(player, rawMessage);
+        }
     }
 
     @EventHandler
