@@ -1,0 +1,10 @@
+local-message-format: "&#E0A602Ⓛ &f%luckperms_prefix% %player% %luckperms_suffix% &7⇨ &#D8D8D8&o%message%"
+global-message-format: "&#FF471AⒼ &f%luckperms_prefix% %player% %luckperms_suffix% &7⇨ &#D8D8D8%message%"
+local-radius: 100
+global-prefix: "!"
+global-cooldown-seconds: 3
+global-permission-required: false
+allow-color-codes: true
+color-permission: "bladechat.color"
+spy-console: true
+spy-format: "&8[&6SPY&8] &#E0A602Ⓛ &f%player% &7⇨ &#D8D8D8&o%message%"

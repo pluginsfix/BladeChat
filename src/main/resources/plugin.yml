@@ -1,0 +1,24 @@
+name: BladeChat
+version: '${project.version}'
+main: pluginsfix.bladechat.BladeChat
+api-version: '1.21'
+author: pluginsfix
+softdepend:
+  - PlaceholderAPI
+  - LuckPerms
+commands:
+  bladechat:
+    description: BladeChat main management command
+    permission: bladechat.use
+    aliases:
+      - bc
+      - chat
+  g:
+    description: Send message to global chat
+    permission: bladechat.global
+    aliases:
+      - global
+  l:
+    description: Send message to local chat
+    aliases:
+      - local
